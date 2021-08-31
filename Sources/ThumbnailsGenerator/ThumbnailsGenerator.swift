@@ -2,13 +2,12 @@ import Cocoa
 import Quartz.QuickLookUI
 import QuickLookThumbnailing
 
-final class ThumbnailsGenerator {
+public final class ThumbnailsGenerator {
     private static let audioFilesExtensions: [String] = [
         "caf", "wav", "wave", "bwf", "aif", "aiff", "aifc", "cdda", "amr", "mp3", "au", "snd", "ac3", "eac3"
     ]
     
-    func generateThumbnail(forURL url: URL, completion: @escaping (NSImage) -> Void) {
-        let size: NSSize = .init(width: 256, height: 256)
+    public static func generateThumbnail(forURL url: URL, ofSize size: CGSize, completion: @escaping (NSImage) -> Void) {
         let scale: CGFloat = NSScreen.main?.backingScaleFactor ?? .zero
 
         let request = QLThumbnailGenerator.Request(
@@ -25,7 +24,7 @@ final class ThumbnailsGenerator {
         }
     }
     
-    static func previewForFile(atURL url: URL, ofSize size: CGSize, asIcon: Bool) -> NSImage {
+    public static func previewForFile(atURL url: URL, ofSize size: CGSize, asIcon: Bool) -> NSImage {
         let dict = [
             kQLThumbnailOptionIconModeKey: NSNumber(booleanLiteral: asIcon)
         ] as CFDictionary
@@ -50,7 +49,7 @@ final class ThumbnailsGenerator {
         }
     }
     
-    static func previewForFiles(atURLs urls: [URL], ofSize size: CGSize, asIcon: Bool, completion: @escaping ([NSImage]) -> Void) {
+    public static func previewForFiles(atURLs urls: [URL], ofSize size: CGSize, asIcon: Bool, completion: @escaping ([NSImage]) -> Void) {
         DispatchQueue.global().async {
             var images: [NSImage] = []
             for url in urls {
@@ -63,7 +62,7 @@ final class ThumbnailsGenerator {
         }
     }
     
-    func generatePreview(forURL url: URL, completion: @escaping (NSImage) -> Void) {
+    public func generatePreview(forURL url: URL, completion: @escaping (NSImage) -> Void) {
         DispatchQueue.global().async {
             guard let values = try? url.resourceValues(forKeys: [URLResourceKey.typeIdentifierKey]) else { return }
             if let type = values.typeIdentifier, UTTypeConformsTo(type as CFString, kUTTypeImage) {
